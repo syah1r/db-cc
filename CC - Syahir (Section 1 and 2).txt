@@ -1,0 +1,47 @@
+Section 1
+1. b 
+2. d
+3. c
+4. b
+5. b
+6. b
+7. a
+8. b
+9. a
+10. c
+
+Section 2
+1. Single node: suitable for lightweight jobs like development or minor testing. For example, if you're running simple ETL jobs that don't require distributed computing, this would be a cost-effective option.
+
+Standard: most commonly used and can handle various tasks like large-scale data processing, machine learning, or streaming jobs. For example, this could be used for running scripts that is using lots of Spark in order to process large data from data lake.
+
+High-Concurrency: this is used if you have many users that needs access. If your team has multiple data engineers/scientists running queries at the same time, this cluster mode is better in order to share the same resource.
+
+2. Autoscaling adjusts the number of worker nodes based on workload requirements. For example, during the day when many users are running jobs, autoscaling will increase the number of workers to handle the demand. At night when usage is low, the cluster will scale down to save costs. This allows efficient resource use without manual intervention.
+
+3. ACID Transactions: Delta Lake supports ACID which ensures data integrity during operations. For example, if a cluster fails mid-write, Delta Lake automatically ignores corrupted files, unlike Parquet, which may result in broken tables requiring manual cleanup.
+
+Versioning and Time Travel: Delta Lake supports versioning which is stored in the transaction log, which allows time travel to view previous table states. This is useful for auditing or recovering from mistakes. Parquet don't have built-in versioning, so data changes are irreversible unless manually backed up.
+
+Schema Evolution: Delta Lake makes it easy to add new columns without rewriting existing data. Parquet requires manual handling of schema changes, which is computationally expensive. You have to read the entire dataset, change the schema manually and then rewrite. 
+
+Deletes and Merges: Delta Lake allows efficient row-level deletes and merge operations (upserts) by rewriting only affected files. However, Parquet requires manually rewriting the entire dataset for such operations, making it slower and more complex.
+
+4. Large datasets can be processed by using distributed storage and parallel computing. For example, a company processing large data can store it on Amazon S3 or Delta Lake. By partitioning the data based on time or region, you can load and process smaller chunks efficiently using Spark’s lazy evaluation, reducing memory requirements while maintaining performance.
+
+5. An ecommerce business may need to audit historical transactions to investigate suspicious activities. If a fraudulent order was processed two weeks ago and that rows of data was accidentally deleted during a cleanup process, Delta Lake’s time travel can retrieve the data at that specific point of time which helps to investigate that data.
+
+6. Databricks uses features like data encryption (Azure Key Vault), access control using Azure Active Directory which allows certain people to access certain data and finally audit logs which we can detect who accessed which data and when. You can check this within the cloud (GCP, AWS, Azure) that it is connected to. 
+
+7. Job clusters are specifically for running automated jobs. They terminate once the job is completed, reducing resource usage and cost.
+
+All-purpose clusters, such as adhoc analysis, data exploration, and development, are designed for collaborative and interactive use, staying onlien for multiple sessions. Multiple users can share them.
+
+8. Databricks can be integrated with Azure DevOps, GitHub, GitLab, Bitbucket. My personal best practices for Azure DevOps include creating a repo in Databricks and creating branches for development. Frequent commits must be made. When pushing an update, ensure to assign Reviewee and delete branch after merging.
+
+9. When you’re working with other team members on a project, multiple people can work on the same project, sync changes, and resolve conflicts all within the Databricks environment. It cuts out the usual back-and-forth of local cloning, editing, and manual commits, which makes collaboration faster.
+
+10. Databricks widgets acts like a parameter or variable which makes it easier for you to filter your datasets without the need to actually look at your code and edit manually. All you have to do is change the values from the top bar of Databricks and this will allow you to perform any transformations in your script. For example you could create a text widget called Country. If you want to filter your dataset for 'Malaysia', then just put that into the widget and call that widget in your SQL or Python code.
+
+11. Monitoring and alerting are essential for detecting performance bottlenecks and optimizing cost. You can access the Compute tab and find the Metrics ribbon to check for CPU and memory usage. This helps prevent jobs from stalling or exceeding budget. Alerts can also be configured to notify users if a job exceeeds a certain runtime or if a cluster is overutilized.
+
